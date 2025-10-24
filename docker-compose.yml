@@ -1,21 +1,32 @@
 version: '3.8'
+
 services:
   jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
+    image: jenkins/jenkins:lts-jdk11
+    container_name: jenkins-openbmc
     privileged: true
     user: root
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
-      - ./jenkins_data:/var/jenkins_home
+      - jenkins_data:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./scripts:/opt/scripts
+      - ./:/var/jenkins_home/workspace/openbmc-pipeline
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     networks:
       - jenkins-net
+
+  bmc-simulator:
+    image: alpine:latest
+    container_name: bmc-simulator
+    command: ["sleep", "infinity"]
+    networks:
+      - jenkins-net
+
+volumes:
+  jenkins_data:
 
 networks:
   jenkins-net:
