@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     echo "Waiting for BMC to be ready..."
-                    sh 'python3 scripts/wait_for_bmc.py || echo "BMC readiness check failed, continuing..."'
+                    sh 'python3 wait_for_bmc.py || echo "BMC readiness check failed, continuing..."'
                 }
             }
         }
