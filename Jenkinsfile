@@ -17,10 +17,10 @@ pipeline {
                 script {
                     echo "Setting up Python environment..."
                     sh '''
-                        # Создаем виртуальное окружение и устанавливаем зависимости
-                        python3 -m venv /tmp/venv
-                        . /tmp/venv/bin/activate
-                        pip install -r requirements.txt
+                        # Устанавливаем необходимые пакеты
+                        apt-get update && apt-get install -y python3-full python3-pip
+                        # Устанавливаем зависимости напрямую
+                        pip3 install -r requirements.txt --break-system-packages
                     '''
                 }
             }
@@ -30,10 +30,7 @@ pipeline {
             steps {
                 script {
                     echo "Waiting for BMC to be ready..."
-                    sh '''
-                        . /tmp/venv/bin/activate
-                        python3 wait_for_bmc.py
-                    '''
+                    sh 'python3 wait_for_bmc.py'
                 }
             }
         }
@@ -43,7 +40,6 @@ pipeline {
                 script {
                     echo "Running OpenBMC tests..."
                     sh '''
-                        . /tmp/venv/bin/activate
                         mkdir -p test-results
                         python3 run_tests.py --all
                     '''
